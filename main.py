@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import os
+import re
 from tkinterdnd2 import *
 
 class TextFileDeleterApp:
@@ -38,14 +39,14 @@ class TextFileDeleterApp:
 
         # 复选按钮1：删除包含字段的行
         self.delete_field_frame = tk.Frame(self.options_frame)
-        self.delete_field_frame.pack(anchor=tk.W)
+        self.delete_field_frame.pack(fill=tk.X, anchor=tk.W)
         self.delete_field_var = tk.BooleanVar()
         self.delete_field_check = tk.Checkbutton(
-            self.delete_field_frame, text="删除包含字段的行", variable=self.delete_field_var
+            self.delete_field_frame, text="删除包含字段的行（支持正则）", variable=self.delete_field_var
         )
         self.delete_field_check.pack(side=tk.LEFT)
-        self.delete_field_entry = tk.Entry(self.delete_field_frame, width=20)
-        self.delete_field_entry.pack(side=tk.LEFT, padx=5)
+        self.delete_field_entry = tk.Entry(self.delete_field_frame)
+        self.delete_field_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
 
         # 复选按钮2：删除空行
         self.delete_empty_frame = tk.Frame(self.options_frame)
@@ -104,8 +105,16 @@ class TextFileDeleterApp:
 
         # 如果选择删除包含字段但未输入字段，显示提示
         if delete_field and not field_text:
-            messagebox.showwarning("警告", "请输入要删除的字段！")
+            messagebox.showwarning("警告", "请输入要删除的字段（支持正则表达式）！")
             return
+
+        # 验证正则表达式
+        if delete_field:
+            try:
+                re.compile(field_text, re.IGNORECASE)
+            except re.error:
+                messagebox.showerror("错误", "无效的正则表达式！")
+                return
 
         # 依次处理文件
         for file in self.file_paths:
@@ -119,8 +128,8 @@ class TextFileDeleterApp:
                         # 删除空行
                         if delete_empty and line.strip() == "":
                             continue
-                        # 删除包含指定字段的行
-                        if delete_field and field_text and field_text in line:
+                        # 删除匹配正则表达式的行
+                        if delete_field and field_text and re.search(field_text, line, re.IGNORECASE):
                             continue
                         processed_lines.append(line)
 
