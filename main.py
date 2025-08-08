@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import os
 import re
+import webbrowser
 from tkinterdnd2 import *
 
 class TextFileDeleterApp:
@@ -59,26 +60,45 @@ class TextFileDeleterApp:
 
         # 创建按钮框架，包含确认处理和关于按钮
         self.button_frame = tk.Frame(root)
-        self.button_frame.pack(pady=5)
+        self.button_frame.pack(side=tk.BOTTOM, anchor=tk.E, padx=10, pady=5)
 
         # 创建确认处理按钮
         self.confirm_button = tk.Button(self.button_frame, text="确认处理", command=self.process_files)
         self.confirm_button.pack(side=tk.LEFT, padx=5)
 
-        # 创建关于按钮
+        # 创建关于按钮，与确认处理按钮同高，靠右
         self.about_button = tk.Button(self.button_frame, text="关于", command=self.show_about)
-        self.about_button.pack(side=tk.LEFT, padx=5)
+        self.about_button.pack(side=tk.RIGHT, padx=5)
 
     def show_about(self):
-        # 显示关于对话框
-        about_text = (
-            "txtLineEraser\n\n"
-            "作者：loseblue\n"
-            "项目地址：[https://github.com/loseblue/txtLineEraser](https://github.com/loseblue/txtLineEraser)\n"
-            "在 Grok 3 支持下开发，感谢 xAI\n"
-            "版本：1.0 (2025-08-08)"
+        # 创建自定义关于对话框
+        about_dialog = tk.Toplevel(self.root)
+        about_dialog.title("关于 txtLineEraser")
+        about_dialog.geometry("400x200")
+        about_dialog.resizable(False, False)
+        about_dialog.transient(self.root)
+        about_dialog.grab_set()
+
+        # 对话框内容
+        tk.Label(about_dialog, text="txtLineEraser", font=("Arial", 12, "bold")).pack(pady=10)
+        tk.Label(about_dialog, text="作者：loseblue").pack()
+        tk.Label(about_dialog, text="在 Grok 3 支持下开发，感谢 xAI").pack()
+        tk.Label(about_dialog, text="版本：1.0 (2025-08-08)").pack()
+
+        # 项目地址超链接
+        url = "https://github.com/loseblue/txtLineEraser"
+        url_label = tk.Label(
+            about_dialog,
+            text="项目地址：https://github.com/loseblue/txtLineEraser",
+            fg="blue",
+            cursor="hand2",
+            wraplength=350
         )
-        messagebox.showinfo("关于 txtLineEraser", about_text)
+        url_label.pack(pady=5)
+        url_label.bind("<Button-1>", lambda e: webbrowser.open(url))
+
+        # 关闭按钮
+        tk.Button(about_dialog, text="关闭", command=about_dialog.destroy).pack(pady=10)
 
     def handle_drop(self, event):
         # 处理拖放事件，获取文件路径
