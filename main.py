@@ -57,9 +57,28 @@ class TextFileDeleterApp:
         )
         self.delete_empty_check.pack(side=tk.LEFT)
 
+        # 创建按钮框架，包含确认处理和关于按钮
+        self.button_frame = tk.Frame(root)
+        self.button_frame.pack(pady=5)
+
         # 创建确认处理按钮
-        self.confirm_button = tk.Button(root, text="确认处理", command=self.process_files)
-        self.confirm_button.pack(pady=5)
+        self.confirm_button = tk.Button(self.button_frame, text="确认处理", command=self.process_files)
+        self.confirm_button.pack(side=tk.LEFT, padx=5)
+
+        # 创建关于按钮
+        self.about_button = tk.Button(self.button_frame, text="关于", command=self.show_about)
+        self.about_button.pack(side=tk.LEFT, padx=5)
+
+    def show_about(self):
+        # 显示关于对话框
+        about_text = (
+            "txtLineEraser\n\n"
+            "作者：loseblue\n"
+            "项目地址：[https://github.com/loseblue/txtLineEraser](https://github.com/loseblue/txtLineEraser)\n"
+            "在 Grok 3 支持下开发，感谢 xAI\n"
+            "版本：1.0 (2025-08-08)"
+        )
+        messagebox.showinfo("关于 txtLineEraser", about_text)
 
     def handle_drop(self, event):
         # 处理拖放事件，获取文件路径
